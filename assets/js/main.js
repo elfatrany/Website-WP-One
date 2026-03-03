@@ -25,8 +25,8 @@
 
         const observerOptions = {
             root: null,
-            rootMargin: '0px 0px -80px 0px',
-            threshold: 0.15
+            rootMargin: '50px 0px -50px 0px',
+            threshold: 0.05
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -47,7 +47,7 @@
 
             // Immediately reveal sections already in or near the viewport on load
             const rect = section.getBoundingClientRect();
-            if (rect.top < window.innerHeight + 100) {
+            if (rect.top < window.innerHeight * 2) {
                 // Small delay so the CSS transition still plays
                 requestAnimationFrame(() => {
                     section.classList.add('is-visible');
@@ -62,7 +62,7 @@
             card.classList.add('card-animate');
             card.style.transitionDelay = (index % 3) * 0.15 + 's';
             const rect = card.getBoundingClientRect();
-            if (rect.top < window.innerHeight + 100) {
+            if (rect.top < window.innerHeight * 2) {
                 requestAnimationFrame(() => { card.classList.add('is-visible'); });
             } else {
                 observer.observe(card);
@@ -73,7 +73,7 @@
         headings.forEach(heading => {
             heading.classList.add('heading-animate');
             const rect = heading.getBoundingClientRect();
-            if (rect.top < window.innerHeight + 100) {
+            if (rect.top < window.innerHeight * 2) {
                 requestAnimationFrame(() => { heading.classList.add('is-visible'); });
             } else {
                 observer.observe(heading);
