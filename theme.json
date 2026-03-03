@@ -1,0 +1,229 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "useRootPaddingAwareAlignments": true,
+    "color": {
+      "defaultPalette": false,
+      "defaultGradients": false,
+      "palette": [
+        {
+          "slug": "primary",
+          "color": "#1a1a5e",
+          "name": "Primary"
+        },
+        {
+          "slug": "primary-light",
+          "color": "#2d3a5c",
+          "name": "Primary Light"
+        },
+        {
+          "slug": "primary-dark",
+          "color": "#141c33",
+          "name": "Primary Dark"
+        },
+        {
+          "slug": "accent",
+          "color": "#c9f56f",
+          "name": "Accent"
+        },
+        {
+          "slug": "accent-light",
+          "color": "#4ade80",
+          "name": "Accent Light"
+        },
+        {
+          "slug": "accent-dark",
+          "color": "#16a34a",
+          "name": "Accent Dark"
+        },
+        {
+          "slug": "secondary",
+          "color": "#5d5a87",
+          "name": "Secondary"
+        },
+        {
+          "slug": "white",
+          "color": "#ffffff",
+          "name": "White"
+        },
+        {
+          "slug": "off-white",
+          "color": "#f8fafc",
+          "name": "Off White"
+        },
+        {
+          "slug": "cream",
+          "color": "#f1f5f9",
+          "name": "Cream"
+        },
+        {
+          "slug": "gray-50",
+          "color": "#f9fafb",
+          "name": "Gray 50"
+        },
+        {
+          "slug": "gray-100",
+          "color": "#f3f4f6",
+          "name": "Gray 100"
+        },
+        {
+          "slug": "gray-200",
+          "color": "#e5e7eb",
+          "name": "Gray 200"
+        },
+        {
+          "slug": "gray-300",
+          "color": "#d1d5db",
+          "name": "Gray 300"
+        },
+        {
+          "slug": "gray-400",
+          "color": "#9ca3af",
+          "name": "Gray 400"
+        },
+        {
+          "slug": "gray-500",
+          "color": "#6b7280",
+          "name": "Gray 500"
+        },
+        {
+          "slug": "gray-600",
+          "color": "#4b5563",
+          "name": "Gray 600"
+        },
+        {
+          "slug": "gray-700",
+          "color": "#374151",
+          "name": "Gray 700"
+        },
+        {
+          "slug": "gray-800",
+          "color": "#1f2937",
+          "name": "Gray 800"
+        },
+        {
+          "slug": "gray-900",
+          "color": "#111827",
+          "name": "Gray 900"
+        }
+      ],
+      "gradients": [
+        {
+          "slug": "primary-gradient",
+          "gradient": "linear-gradient(135deg, #1e2a4a 0%, #2d3a5c 100%)",
+          "name": "Primary Gradient"
+        },
+        {
+          "slug": "accent-gradient",
+          "gradient": "linear-gradient(135deg, #22c55e 0%, #4ade80 100%)",
+          "name": "Accent Gradient"
+        }
+      ]
+    },
+    "typography": {
+      "fluid": true,
+      "fontFamilies": [
+        {
+          "fontFamily": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+          "slug": "primary",
+          "name": "Primary"
+        }
+      ],
+      "fontSizes": [
+        { "slug": "small", "size": "0.875rem", "name": "Small" },
+        { "slug": "medium", "size": "1rem", "name": "Medium" },
+        { "slug": "large", "size": "1.125rem", "name": "Large" },
+        { "slug": "x-large", "size": "1.25rem", "name": "Extra Large" },
+        { "slug": "xx-large", "size": "1.5rem", "name": "2X Large" },
+        { "slug": "huge", "size": "2.5rem", "name": "Huge" },
+        { "slug": "gigantic", "size": "3.5rem", "name": "Gigantic" }
+      ]
+    },
+    "spacing": {
+      "units": ["px", "em", "rem", "%", "vw", "vh"],
+      "spacingSizes": [
+        { "slug": "10", "size": "0.5rem", "name": "2XS" },
+        { "slug": "20", "size": "0.75rem", "name": "XS" },
+        { "slug": "30", "size": "1rem", "name": "S" },
+        { "slug": "40", "size": "1.5rem", "name": "M" },
+        { "slug": "50", "size": "2rem", "name": "L" },
+        { "slug": "60", "size": "3rem", "name": "XL" },
+        { "slug": "70", "size": "4rem", "name": "2XL" },
+        { "slug": "80", "size": "6rem", "name": "3XL" },
+        { "slug": "90", "size": "8rem", "name": "4XL" }
+      ]
+    },
+    "layout": {
+      "contentSize": "1200px",
+      "wideSize": "1400px"
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var(--wp--preset--color--white)",
+      "text": "var(--wp--preset--color--gray-700)"
+    },
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--primary)",
+      "fontSize": "var(--wp--preset--font-size--medium)",
+      "lineHeight": "1.7"
+    },
+    "spacing": {
+      "padding": {
+        "left": "clamp(1rem, 5vw, 3rem)",
+        "right": "clamp(1rem, 5vw, 3rem)"
+      },
+      "blockGap": "0"
+    },
+    "elements": {
+      "heading": {
+        "typography": {
+          "fontFamily": "var(--wp--preset--font-family--primary)",
+          "fontWeight": "700",
+          "lineHeight": "1.2"
+        },
+        "color": {
+          "text": "var(--wp--preset--color--primary)"
+        }
+      },
+      "link": {
+        "color": {
+          "text": "var(--wp--preset--color--primary)"
+        },
+        ":hover": {
+          "color": {
+            "text": "var(--wp--preset--color--accent)"
+          }
+        }
+      },
+      "button": {
+        "color": {
+          "background": "var(--wp--preset--color--accent)",
+          "text": "var(--wp--preset--color--primary)"
+        },
+        "border": {
+          "radius": "8px"
+        },
+        "typography": {
+          "fontWeight": "600"
+        }
+      }
+    },
+    "blocks": {
+      "core/columns": {
+        "spacing": {
+          "blockGap": "40px"
+        }
+      }
+    }
+  },
+  "templateParts": [
+    { "name": "header", "title": "Header", "area": "header" },
+    { "name": "footer", "title": "Footer", "area": "footer" }
+  ],
+  "customTemplates": [
+    { "name": "page-no-title", "title": "Page (No Title)", "postTypes": ["page"] }
+  ]
+}

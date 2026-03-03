@@ -1,0 +1,27 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Claude Code
+.claude/
+
+# Archived old templates (not needed in deploy)
+_archive/
+
+# One-time setup script (already run)
+inc/hsr-setup-data.php
+
+# Dev/reference files
+homepage-content.txt
+SPACING-RULESET.md
+
+# Node (if added later)
+node_modules/
+package-lock.json
+
+# Logs
+*.log

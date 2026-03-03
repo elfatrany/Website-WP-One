@@ -1,0 +1,408 @@
+/**
+ * Hill Street Realty - Main Stylesheet
+ * Premium Real Estate Theme - Homelio Style
+ * Only loaded on frontend via wp_enqueue_scripts
+ */
+
+/* ==========================================================================
+   CSS Custom Properties
+   ========================================================================== */
+
+:root {
+    --hsr-transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --hsr-transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --hsr-transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --hsr-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --hsr-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+    --hsr-shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+    --hsr-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+    --hsr-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --hsr-shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+    --hsr-radius-sm: 8px;
+    --hsr-radius-md: 12px;
+    --hsr-radius-lg: 16px;
+    --hsr-radius-xl: 24px;
+}
+
+/* ==========================================================================
+   Performance Optimizations
+   ========================================================================== */
+
+/* Use GPU-accelerated transforms for smooth animations */
+.property-card,
+.team-card,
+.is-style-hsr-hover-lift,
+.wp-block-button__link {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Optimize images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Hardware acceleration for animations */
+.is-style-hsr-hover-zoom img {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* ==========================================================================
+   HERO HOMELIO - Custom Grid Layout (bypasses WordPress columns)
+   ========================================================================== */
+
+/* Target our custom grid class - no more fighting WordPress columns */
+.hero-images-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 400px !important;
+    gap: 40px !important;
+    align-items: start !important;
+    width: 100% !important;
+}
+
+/* Ensure children fill their grid cells */
+.hero-images-grid > .wp-block-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+/* FALLBACK: Also target WordPress columns if old pattern is still on page */
+.hero-images-section .wp-block-columns {
+    display: grid !important;
+    grid-template-columns: 1fr 400px !important;
+    gap: 40px !important;
+}
+
+.hero-images-section .wp-block-column {
+    flex-basis: unset !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+@media (max-width: 1024px) {
+    .hero-images-grid {
+        grid-template-columns: 1fr 340px !important;
+        gap: 30px !important;
+    }
+
+    .hero-images-section .wp-block-columns {
+        grid-template-columns: 1fr 340px !important;
+        gap: 30px !important;
+    }
+}
+
+@media (max-width: 782px) {
+    .hero-images-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 24px !important;
+    }
+
+    .hero-images-section .wp-block-columns {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 24px !important;
+    }
+
+    .hero-images-section .wp-block-column {
+        flex: 1 1 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+}
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   Property Cards
+   ========================================================================== */
+
+.property-card {
+    transition: transform var(--hsr-transition-normal), box-shadow var(--hsr-transition-normal);
+    overflow: hidden;
+}
+
+.property-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--hsr-shadow-card-hover);
+}
+
+.property-card img {
+    transition: transform var(--hsr-transition-slow);
+}
+
+.property-card:hover img {
+    transform: scale(1.05);
+}
+
+/* ==========================================================================
+   Trust Badge & Year Badge
+   ========================================================================== */
+
+.trust-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--hsr-shadow-xl);
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.wp-block-button__link {
+    transition: all var(--hsr-transition-normal);
+}
+
+.wp-block-button__link:hover {
+    transform: translateY(-2px);
+}
+
+/* Outline button style */
+.is-style-outline .wp-block-button__link:hover {
+    background-color: var(--wp--preset--color--primary);
+    color: white;
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+.wp-block-navigation-item__content {
+    transition: color var(--hsr-transition-fast);
+}
+
+.wp-block-navigation-item__content:hover {
+    color: var(--wp--preset--color--accent);
+}
+
+/* ==========================================================================
+   Images
+   ========================================================================== */
+
+.is-style-hsr-hover-zoom {
+    overflow: hidden;
+}
+
+.is-style-hsr-hover-zoom img {
+    transition: transform var(--hsr-transition-slow);
+}
+
+.is-style-hsr-hover-zoom:hover img {
+    transform: scale(1.08);
+}
+
+/* ==========================================================================
+   Group Styles
+   ========================================================================== */
+
+.is-style-hsr-card {
+    background: white;
+    border-radius: var(--hsr-radius-lg);
+    box-shadow: var(--hsr-shadow-card);
+    transition: box-shadow var(--hsr-transition-normal), transform var(--hsr-transition-normal);
+}
+
+.is-style-hsr-card:hover {
+    box-shadow: var(--hsr-shadow-card-hover);
+}
+
+.is-style-hsr-hover-lift {
+    transition: transform var(--hsr-transition-normal), box-shadow var(--hsr-transition-normal);
+}
+
+.is-style-hsr-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--hsr-shadow-lg);
+}
+
+/* ==========================================================================
+   Team Cards
+   ========================================================================== */
+
+.team-card {
+    transition: transform var(--hsr-transition-normal);
+}
+
+.team-card:hover {
+    transform: translateY(-6px);
+}
+
+.team-card .wp-block-social-links {
+    opacity: 0;
+    transition: opacity var(--hsr-transition-normal);
+}
+
+.team-card:hover .wp-block-social-links {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Testimonials
+   ========================================================================== */
+
+.testimonial-card {
+    position: relative;
+}
+
+.testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    font-size: 120px;
+    font-family: Georgia, serif;
+    color: var(--wp--preset--color--accent);
+    opacity: 0.1;
+    line-height: 1;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.site-footer a {
+    transition: color var(--hsr-transition-fast);
+}
+
+.site-footer a:hover {
+    color: var(--wp--preset--color--accent);
+}
+
+/* ==========================================================================
+   Form Elements
+   ========================================================================== */
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+    transition: border-color var(--hsr-transition-fast), box-shadow var(--hsr-transition-fast);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--wp--preset--color--accent);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+    outline: none;
+}
+
+/* ==========================================================================
+   Responsive Styles
+   ========================================================================== */
+
+@media (max-width: 782px) {
+    .trust-badge {
+        position: relative !important;
+        bottom: auto;
+        left: auto;
+        margin: var(--wp--preset--spacing--40) auto 0;
+    }
+
+    .year-badge {
+        position: relative !important;
+        bottom: auto;
+        right: auto;
+        margin-top: var(--wp--preset--spacing--40);
+    }
+
+    .wp-block-group.alignfull {
+        padding-left: var(--wp--preset--spacing--30) !important;
+        padding-right: var(--wp--preset--spacing--30) !important;
+    }
+
+    .site-footer .wp-block-columns {
+        gap: var(--wp--preset--spacing--50);
+    }
+
+    .property-card:hover {
+        transform: translateY(-4px);
+    }
+}
+
+@media (min-width: 783px) and (max-width: 991px) {
+    .site-header .wp-block-group.alignwide {
+        flex-wrap: wrap;
+        gap: var(--wp--preset--spacing--20);
+    }
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--wp--preset--color--accent);
+    outline-offset: 2px;
+}
+
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .site-header, .site-footer, .wp-block-button, .wp-block-social-links {
+        display: none !important;
+    }
+    body {
+        font-size: 12pt;
+        color: #000;
+        background: #fff;
+    }
+}

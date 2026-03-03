@@ -1,0 +1,105 @@
+/**
+ * Hill Street Realty - Editor Styles
+ * Styles for the Gutenberg editor to match frontend
+ */
+
+/* Editor wrapper */
+.editor-styles-wrapper {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #212121;
+}
+
+/* Headings */
+.editor-styles-wrapper h1,
+.editor-styles-wrapper h2,
+.editor-styles-wrapper h3,
+.editor-styles-wrapper h4,
+.editor-styles-wrapper h5,
+.editor-styles-wrapper h6 {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #212121;
+}
+
+/* Links */
+.editor-styles-wrapper a {
+    color: #0693E3;
+}
+
+.editor-styles-wrapper a:hover {
+    color: #32373C;
+}
+
+/* Buttons */
+.editor-styles-wrapper .wp-block-button__link {
+    border-radius: 9999px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Property card styling in editor */
+.editor-styles-wrapper .property-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* Service card styling in editor */
+.editor-styles-wrapper .service-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Block style variations */
+.editor-styles-wrapper .is-style-hsr-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.editor-styles-wrapper .is-style-hsr-hover-lift {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Badge styling */
+.editor-styles-wrapper .has-primary-background-color.has-white-color,
+.editor-styles-wrapper .has-accent-background-color.has-white-color {
+    display: inline-block;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Responsive preview adjustments */
+.editor-styles-wrapper .wp-block-columns {
+    gap: 24px;
+}
+
+/* Separator styling */
+.editor-styles-wrapper .wp-block-separator {
+    border-color: #EEEEEE;
+}
+
+/* Quote styling */
+.editor-styles-wrapper .wp-block-quote {
+    border-left: 4px solid #0693E3;
+    padding-left: 24px;
+    font-style: italic;
+}
+
+/* Image styling */
+.editor-styles-wrapper .wp-block-image img {
+    border-radius: 8px;
+}
+
+/* Group/container styling */
+.editor-styles-wrapper .wp-block-group {
+    position: relative;
+}
+
+/* Navigation block in editor */
+.editor-styles-wrapper .wp-block-navigation-item a {
+    font-weight: 500;
+}
