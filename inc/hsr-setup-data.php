@@ -149,8 +149,21 @@ function hsr_populate_homepage() {
     }
 
     if ( ! $front_page_id ) {
-        $log[] = 'ERROR: No front page found. Set a static front page in Settings → Reading, then re-run.';
-        return $log;
+        // Auto-create a Home page and set it as the front page.
+        $page_id = wp_insert_post( array(
+            'post_title'  => 'Home',
+            'post_name'   => 'home',
+            'post_status' => 'publish',
+            'post_type'   => 'page',
+        ) );
+        if ( is_wp_error( $page_id ) ) {
+            $log[] = 'ERROR: Could not create Home page: ' . $page_id->get_error_message();
+            return $log;
+        }
+        $front_page_id = $page_id;
+        update_option( 'show_on_front', 'page' );
+        update_option( 'page_on_front', $front_page_id );
+        $log[] = "Created Home page (ID {$front_page_id}) and set as static front page.";
     }
 
     $log[] = "Front page found: ID {$front_page_id}";
@@ -468,12 +481,38 @@ function hsr_populate_inner_pages() {
         ),
     );
 
+    // Page titles for auto-creation.
+    $page_titles = array(
+        'about'        => 'About',
+        'team'         => 'Team',
+        'strategy'     => 'Strategy',
+        'transactions' => 'Transactions',
+        'fund'         => 'Fund',
+        'history'      => 'History',
+        'news'         => 'News',
+        'contact'      => 'Contact',
+    );
+
     foreach ( $pages_config as $slug => $modules ) {
         $page = get_page_by_path( $slug );
+
+        // Auto-create the page if it doesn't exist.
         if ( ! $page ) {
-            $log[] = "SKIP: Page '{$slug}' not found. Create it first.";
-            continue;
+            $title   = isset( $page_titles[ $slug ] ) ? $page_titles[ $slug ] : ucfirst( $slug );
+            $page_id = wp_insert_post( array(
+                'post_title'  => $title,
+                'post_name'   => $slug,
+                'post_status' => 'publish',
+                'post_type'   => 'page',
+            ) );
+            if ( is_wp_error( $page_id ) ) {
+                $log[] = "ERROR: Could not create page '{$slug}': " . $page_id->get_error_message();
+                continue;
+            }
+            $log[] = "Created page '{$title}' (ID {$page_id}).";
+            $page = get_post( $page_id );
         }
+
         update_field( 'modules', $modules, $page->ID );
         $log[] = "Page '{$slug}' (ID {$page->ID}) populated with " . count( $modules ) . ' module(s).';
     }
