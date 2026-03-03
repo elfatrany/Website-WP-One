@@ -44,20 +44,40 @@
         // Add animation class and observe sections
         sections.forEach((section, index) => {
             section.classList.add('section-animate');
-            observer.observe(section);
+
+            // Immediately reveal sections already in or near the viewport on load
+            const rect = section.getBoundingClientRect();
+            if (rect.top < window.innerHeight + 100) {
+                // Small delay so the CSS transition still plays
+                requestAnimationFrame(() => {
+                    section.classList.add('is-visible');
+                });
+            } else {
+                observer.observe(section);
+            }
         });
 
         // Add staggered animation to cards
         cards.forEach((card, index) => {
             card.classList.add('card-animate');
             card.style.transitionDelay = (index % 3) * 0.15 + 's';
-            observer.observe(card);
+            const rect = card.getBoundingClientRect();
+            if (rect.top < window.innerHeight + 100) {
+                requestAnimationFrame(() => { card.classList.add('is-visible'); });
+            } else {
+                observer.observe(card);
+            }
         });
 
         // Animate headings
         headings.forEach(heading => {
             heading.classList.add('heading-animate');
-            observer.observe(heading);
+            const rect = heading.getBoundingClientRect();
+            if (rect.top < window.innerHeight + 100) {
+                requestAnimationFrame(() => { heading.classList.add('is-visible'); });
+            } else {
+                observer.observe(heading);
+            }
         });
     }
 
