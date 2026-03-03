@@ -33,6 +33,12 @@ function hsr_run_setup_data() {
 
     $results = array();
 
+    // Phase A: WordPress Settings (site name, reading, permalinks)
+    $results['wp_settings'] = hsr_setup_wp_settings();
+
+    // Phase B: Navigation Menus
+    $results['nav_menus'] = hsr_setup_nav_menus();
+
     // Phase 6: Populate ACF Options
     $results['options'] = hsr_populate_options();
 
@@ -45,10 +51,186 @@ function hsr_run_setup_data() {
     // Phase 9: Migrate CPT meta
     $results['cpt_migration'] = hsr_migrate_cpt_meta();
 
+    // Phase C: Create sample Transaction CPT posts
+    $results['transactions'] = hsr_create_sample_transactions();
+
+    // Phase D: Create sample Team Member CPT posts
+    $results['team_members'] = hsr_create_sample_team_members();
+
     // Display results
     wp_die( '<h1>HSR Setup Complete</h1><pre>' . print_r( $results, true ) . '</pre><p><strong>Done!</strong> You can now remove <code>inc/hsr-setup-data.php</code> and its require_once from functions.php.</p>' );
 }
 add_action( 'admin_init', 'hsr_run_setup_data' );
+
+/*===========================================================
+ * PHASE A: WordPress Core Settings
+ *==========================================================*/
+function hsr_setup_wp_settings() {
+    $log = array();
+
+    // Site title & tagline.
+    update_option( 'blogname', 'Hill Street Realty' );
+    update_option( 'blogdescription', 'Disciplined Judgement. Durable Returns.' );
+    $log[] = 'Site title and tagline set.';
+
+    // Static front page (Home) — will be created in Phase 7 if missing.
+    update_option( 'show_on_front', 'page' );
+    $log[] = 'Reading settings: static front page enabled.';
+
+    // Permalink structure.
+    $current = get_option( 'permalink_structure' );
+    if ( $current !== '/%postname%/' ) {
+        update_option( 'permalink_structure', '/%postname%/' );
+        flush_rewrite_rules();
+        $log[] = 'Permalink structure set to /%postname%/.';
+    } else {
+        $log[] = 'Permalinks already set to /%postname%/.';
+    }
+
+    // Timezone.
+    update_option( 'timezone_string', 'America/Los_Angeles' );
+    $log[] = 'Timezone set to America/Los_Angeles.';
+
+    return $log;
+}
+
+/*===========================================================
+ * PHASE B: Navigation Menus
+ *==========================================================*/
+function hsr_setup_nav_menus() {
+    $log = array();
+
+    // --- Primary Menu ---
+    $menu_name = 'Primary Menu';
+    $menu_exists = wp_get_nav_menu_object( $menu_name );
+
+    if ( $menu_exists ) {
+        $log[] = "Primary menu already exists (ID {$menu_exists->term_id}). Skipping.";
+        $menu_id = $menu_exists->term_id;
+    } else {
+        $menu_id = wp_create_nav_menu( $menu_name );
+        if ( is_wp_error( $menu_id ) ) {
+            $log[] = 'ERROR creating primary menu: ' . $menu_id->get_error_message();
+            return $log;
+        }
+        $log[] = "Created primary menu (ID {$menu_id}).";
+
+        // Helper to find page ID by slug.
+        $get_page_id = function( $slug ) {
+            $page = get_page_by_path( $slug );
+            return $page ? $page->ID : 0;
+        };
+
+        // About (parent)
+        $about_id = wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'     => 'About',
+            'menu-item-object'    => 'page',
+            'menu-item-object-id' => $get_page_id( 'about' ),
+            'menu-item-type'      => $get_page_id( 'about' ) ? 'post_type' : 'custom',
+            'menu-item-url'       => '/about/',
+            'menu-item-status'    => 'publish',
+            'menu-item-position'  => 1,
+        ) );
+
+        // About → Team (child)
+        wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'      => 'Team',
+            'menu-item-object'     => 'page',
+            'menu-item-object-id'  => $get_page_id( 'team' ),
+            'menu-item-type'       => $get_page_id( 'team' ) ? 'post_type' : 'custom',
+            'menu-item-url'        => '/team/',
+            'menu-item-status'     => 'publish',
+            'menu-item-parent-id'  => $about_id,
+            'menu-item-position'   => 2,
+        ) );
+
+        // About → History (child)
+        wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'      => 'History',
+            'menu-item-object'     => 'page',
+            'menu-item-object-id'  => $get_page_id( 'history' ),
+            'menu-item-type'       => $get_page_id( 'history' ) ? 'post_type' : 'custom',
+            'menu-item-url'        => '/history/',
+            'menu-item-status'     => 'publish',
+            'menu-item-parent-id'  => $about_id,
+            'menu-item-position'   => 3,
+        ) );
+
+        // Strategy
+        wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'     => 'Strategy',
+            'menu-item-object'    => 'page',
+            'menu-item-object-id' => $get_page_id( 'strategy' ),
+            'menu-item-type'      => $get_page_id( 'strategy' ) ? 'post_type' : 'custom',
+            'menu-item-url'       => '/strategy/',
+            'menu-item-status'    => 'publish',
+            'menu-item-position'  => 4,
+        ) );
+
+        // Transactions (parent)
+        $tx_id = wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'     => 'Transactions',
+            'menu-item-object'    => 'page',
+            'menu-item-object-id' => $get_page_id( 'transactions' ),
+            'menu-item-type'      => $get_page_id( 'transactions' ) ? 'post_type' : 'custom',
+            'menu-item-url'       => '/transactions/',
+            'menu-item-status'    => 'publish',
+            'menu-item-position'  => 5,
+        ) );
+
+        // Transactions → Current (child, custom link)
+        wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'     => 'Current',
+            'menu-item-url'       => '/transactions/?status=current',
+            'menu-item-type'      => 'custom',
+            'menu-item-status'    => 'publish',
+            'menu-item-parent-id' => $tx_id,
+            'menu-item-position'  => 6,
+        ) );
+
+        // Transactions → Realized (child, custom link)
+        wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'     => 'Realized',
+            'menu-item-url'       => '/transactions/?status=realized',
+            'menu-item-type'      => 'custom',
+            'menu-item-status'    => 'publish',
+            'menu-item-parent-id' => $tx_id,
+            'menu-item-position'  => 7,
+        ) );
+
+        // Fund
+        wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'     => 'Fund',
+            'menu-item-object'    => 'page',
+            'menu-item-object-id' => $get_page_id( 'fund' ),
+            'menu-item-type'      => $get_page_id( 'fund' ) ? 'post_type' : 'custom',
+            'menu-item-url'       => '/fund/',
+            'menu-item-status'    => 'publish',
+            'menu-item-position'  => 8,
+        ) );
+
+        // News
+        wp_update_nav_menu_item( $menu_id, 0, array(
+            'menu-item-title'     => 'News',
+            'menu-item-object'    => 'page',
+            'menu-item-object-id' => $get_page_id( 'news' ),
+            'menu-item-type'      => $get_page_id( 'news' ) ? 'post_type' : 'custom',
+            'menu-item-url'       => '/news/',
+            'menu-item-status'    => 'publish',
+            'menu-item-position'  => 9,
+        ) );
+
+        $log[] = 'Primary menu items created (About>Team/History, Strategy, Transactions>Current/Realized, Fund, News).';
+    }
+
+    // Assign menu to theme location.
+    $locations = get_theme_mod( 'nav_menu_locations', array() );
+    $locations['primary'] = $menu_id;
+    set_theme_mod( 'nav_menu_locations', $locations );
+    $log[] = 'Primary menu assigned to "primary" theme location.';
+
+    return $log;
+}
 
 /*===========================================================
  * PHASE 6: Populate ACF Options
@@ -606,6 +788,240 @@ function hsr_migrate_cpt_meta() {
         }
     }
     $log[] = "Team members: {$tm_count} of " . count( $team ) . ' migrated.';
+
+    return $log;
+}
+
+/*===========================================================
+ * PHASE C: Create Sample Transaction CPT Posts
+ *==========================================================*/
+function hsr_create_sample_transactions() {
+    $log = array();
+
+    $transactions = array(
+        array(
+            'title'      => 'The Westmore',
+            'slug'       => 'the-westmore',
+            'address'    => '456 Westmore Ave',
+            'city_state' => 'Los Angeles, CA',
+            'units'      => 156,
+            'status'     => 'Realized',
+            'type'       => 'Value-Add',
+            'year'       => 2015,
+            'year_sold'  => 2019,
+            'featured'   => 1,
+            'order'      => 1,
+        ),
+        array(
+            'title'      => 'Highland Gardens',
+            'slug'       => 'highland-gardens',
+            'address'    => '789 Highland Blvd',
+            'city_state' => 'Denver, CO',
+            'units'      => 224,
+            'status'     => 'Current',
+            'type'       => 'Repositioning',
+            'year'       => 2021,
+            'year_sold'  => 0,
+            'featured'   => 1,
+            'order'      => 2,
+        ),
+        array(
+            'title'      => 'Parkview Terrace',
+            'slug'       => 'parkview-terrace',
+            'address'    => '321 Parkview Dr',
+            'city_state' => 'Phoenix, AZ',
+            'units'      => 198,
+            'status'     => 'Realized',
+            'type'       => 'Value-Add',
+            'year'       => 2017,
+            'year_sold'  => 2022,
+            'featured'   => 1,
+            'order'      => 3,
+        ),
+        array(
+            'title'      => 'Meridian Place',
+            'slug'       => 'meridian-place',
+            'address'    => '500 Meridian Way',
+            'city_state' => 'Las Vegas, NV',
+            'units'      => 312,
+            'status'     => 'Current',
+            'type'       => 'Core-Plus',
+            'year'       => 2023,
+            'year_sold'  => 0,
+            'featured'   => 1,
+            'order'      => 4,
+        ),
+        array(
+            'title'      => 'Canyon Ridge',
+            'slug'       => 'canyon-ridge',
+            'address'    => '100 Canyon Ridge Rd',
+            'city_state' => 'Tucson, AZ',
+            'units'      => 144,
+            'status'     => 'Realized',
+            'type'       => 'Value-Add',
+            'year'       => 2012,
+            'year_sold'  => 2016,
+            'featured'   => 0,
+            'order'      => 5,
+        ),
+        array(
+            'title'      => 'Summit Pointe',
+            'slug'       => 'summit-pointe',
+            'address'    => '250 Summit Pointe Blvd',
+            'city_state' => 'Salt Lake City, UT',
+            'units'      => 180,
+            'status'     => 'Realized',
+            'type'       => 'Repositioning',
+            'year'       => 2014,
+            'year_sold'  => 2018,
+            'featured'   => 0,
+            'order'      => 6,
+        ),
+    );
+
+    foreach ( $transactions as $tx ) {
+        // Skip if already exists.
+        $existing = get_page_by_path( $tx['slug'], OBJECT, 'hsr_transaction' );
+        if ( $existing ) {
+            $log[] = "Transaction '{$tx['title']}' already exists (ID {$existing->ID}). Skipping.";
+            continue;
+        }
+
+        $post_id = wp_insert_post( array(
+            'post_title'  => $tx['title'],
+            'post_name'   => $tx['slug'],
+            'post_status' => 'publish',
+            'post_type'   => 'hsr_transaction',
+        ) );
+
+        if ( is_wp_error( $post_id ) ) {
+            $log[] = "ERROR creating transaction '{$tx['title']}': " . $post_id->get_error_message();
+            continue;
+        }
+
+        update_field( 'transaction_address',    $tx['address'],    $post_id );
+        update_field( 'transaction_city_state',  $tx['city_state'], $post_id );
+        update_field( 'transaction_units',       $tx['units'],      $post_id );
+        update_field( 'transaction_status',      $tx['status'],     $post_id );
+        update_field( 'transaction_type',        $tx['type'],       $post_id );
+        update_field( 'transaction_year',        $tx['year'],       $post_id );
+        if ( $tx['year_sold'] ) {
+            update_field( 'transaction_year_sold', $tx['year_sold'], $post_id );
+        }
+        update_field( 'transaction_featured',    $tx['featured'],   $post_id );
+        update_field( 'transaction_order',       $tx['order'],      $post_id );
+
+        $log[] = "Created transaction '{$tx['title']}' (ID {$post_id}).";
+    }
+
+    return $log;
+}
+
+/*===========================================================
+ * PHASE D: Create Sample Team Member CPT Posts
+ *==========================================================*/
+function hsr_create_sample_team_members() {
+    $log = array();
+
+    $members = array(
+        array(
+            'name'       => 'Jonathan Mitchell',
+            'slug'       => 'jonathan-mitchell',
+            'position'   => 'Managing Partner & CEO',
+            'department' => 'Leadership',
+            'email'      => 'jmitchell@hillstreetrealtyinc.com',
+            'phone'      => '310.914.1410',
+            'bio'        => 'Jonathan founded Hill Street Realty in 2001 with a vision to create a vertically integrated investment firm focused on multifamily assets. With over 25 years of real estate experience, he leads the firm\'s strategic direction and oversees all investment activities.',
+            'featured'   => 1,
+            'order'      => 1,
+        ),
+        array(
+            'name'       => 'Sarah Chen',
+            'slug'       => 'sarah-chen',
+            'position'   => 'Chief Investment Officer',
+            'department' => 'Leadership',
+            'email'      => 'schen@hillstreetrealtyinc.com',
+            'phone'      => '310.914.1411',
+            'bio'        => 'Sarah oversees all investment underwriting and due diligence. She brings 18 years of institutional real estate experience, having previously held senior roles at major private equity firms. Her disciplined approach to analysis ensures each investment meets the firm\'s rigorous standards.',
+            'featured'   => 1,
+            'order'      => 2,
+        ),
+        array(
+            'name'       => 'Michael Torres',
+            'slug'       => 'michael-torres',
+            'position'   => 'VP of Acquisitions',
+            'department' => 'Investments',
+            'email'      => 'mtorres@hillstreetrealtyinc.com',
+            'phone'      => '310.914.1412',
+            'bio'        => 'Michael leads the firm\'s acquisitions pipeline, identifying and evaluating value-add multifamily opportunities across Western markets. He has sourced over $400M in transactions during his tenure at Hill Street.',
+            'featured'   => 1,
+            'order'      => 3,
+        ),
+        array(
+            'name'       => 'Emily Rodriguez',
+            'slug'       => 'emily-rodriguez',
+            'position'   => 'VP of Asset Management',
+            'department' => 'Operations',
+            'email'      => 'erodriguez@hillstreetrealtyinc.com',
+            'phone'      => '970.999.1411',
+            'bio'        => 'Emily leads the hands-on management of the firm\'s portfolio, overseeing property operations, capital improvements, and value creation strategies. Her operational expertise is key to maximizing returns across our investments.',
+            'featured'   => 1,
+            'order'      => 4,
+        ),
+        array(
+            'name'       => 'David Park',
+            'slug'       => 'david-park',
+            'position'   => 'Director of Capital Markets',
+            'department' => 'Investments',
+            'email'      => 'dpark@hillstreetrealtyinc.com',
+            'phone'      => '310.914.1413',
+            'bio'        => 'David manages investor relations and capital raising efforts. He structures investment vehicles and maintains strong relationships with the firm\'s institutional and private capital partners.',
+            'featured'   => 0,
+            'order'      => 5,
+        ),
+        array(
+            'name'       => 'Rachel Kim',
+            'slug'       => 'rachel-kim',
+            'position'   => 'Director of Operations',
+            'department' => 'Operations',
+            'email'      => 'rkim@hillstreetrealtyinc.com',
+            'phone'      => '970.999.1412',
+            'bio'        => 'Rachel oversees day-to-day operations for the Denver portfolio, managing property teams and driving operational efficiencies across our Colorado assets.',
+            'featured'   => 0,
+            'order'      => 6,
+        ),
+    );
+
+    foreach ( $members as $member ) {
+        // Skip if already exists.
+        $existing = get_page_by_path( $member['slug'], OBJECT, 'hsr_team' );
+        if ( $existing ) {
+            $log[] = "Team member '{$member['name']}' already exists (ID {$existing->ID}). Skipping.";
+            continue;
+        }
+
+        $post_id = wp_insert_post( array(
+            'post_title'  => $member['name'],
+            'post_name'   => $member['slug'],
+            'post_status' => 'publish',
+            'post_type'   => 'hsr_team',
+        ) );
+
+        if ( is_wp_error( $post_id ) ) {
+            $log[] = "ERROR creating team member '{$member['name']}': " . $post_id->get_error_message();
+            continue;
+        }
+
+        update_field( 'team_position',   $member['position'],   $post_id );
+        update_field( 'team_department', $member['department'], $post_id );
+        update_field( 'team_email',      $member['email'],      $post_id );
+        update_field( 'team_phone',      $member['phone'],      $post_id );
+        update_field( 'team_bio',        $member['bio'],        $post_id );
+        update_field( 'team_featured',   $member['featured'],   $post_id );
+        update_field( 'team_order',      $member['order'],      $post_id );
+
+        $log[] = "Created team member '{$member['name']}' (ID {$post_id}).";
+    }
 
     return $log;
 }
