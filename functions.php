@@ -31,7 +31,6 @@ require_once HSR_THEME_DIR . '/inc/acf-options-pages.php';
 require_once HSR_THEME_DIR . '/inc/acf-field-groups.php';
 require_once HSR_THEME_DIR . '/inc/acf-cpt-fields.php';
 require_once HSR_THEME_DIR . '/inc/acf-flexible-content.php';
-require_once HSR_THEME_DIR . '/inc/hsr-setup-data.php';
 
 /*----------------------------------------------------------
  * ACF JSON Save/Load Paths

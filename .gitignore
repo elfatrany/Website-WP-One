@@ -12,8 +12,8 @@ Thumbs.db
 # Archived old templates (not needed in deploy)
 _archive/
 
-# One-time setup script (uncomment after running on all servers)
-# inc/hsr-setup-data.php
+# One-time setup script (not needed in deploy)
+inc/hsr-setup-data.php
 
 # Dev/reference files
 homepage-content.txt

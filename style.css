@@ -577,6 +577,157 @@ path[stroke="#E3A861"] {
     }
 }
 
+/* ==========================================
+   CLASSIC wp_nav_menu() NAVIGATION STYLING
+   Used by header.php when FSE block nav is not available
+   ========================================== */
+
+/* Base layout */
+.hsr-primary-nav {
+    display: flex;
+    align-items: center;
+}
+
+.hsr-nav-list {
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2.5vw, 32px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Top-level menu items */
+.hsr-nav-list > .menu-item > a {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--wp--preset--color--primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hsr-nav-list > .menu-item > a:hover {
+    color: var(--wp--preset--color--accent);
+}
+
+/* Dropdown arrow for items with children */
+.hsr-nav-list > .menu-item-has-children > a::after {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
+    margin-left: 2px;
+}
+
+/* Parent positioning for dropdown */
+.hsr-nav-list > .menu-item-has-children {
+    position: relative;
+}
+
+/* Hover bridge */
+.hsr-nav-list > .menu-item-has-children::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: transparent;
+}
+
+/* Dropdown sub-menu */
+.hsr-nav-list .sub-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--wp--preset--color--primary);
+    min-width: 200px;
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow:
+        0 8px 24px rgba(26, 26, 94, 0.35),
+        0 4px 20px rgba(201, 245, 111, 0.4),
+        0 0 40px rgba(201, 245, 111, 0.25);
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    transition-delay: 0.15s;
+    z-index: 100;
+}
+
+/* Show dropdown on hover */
+.hsr-nav-list > .menu-item-has-children:hover > .sub-menu,
+.hsr-nav-list > .menu-item-has-children:focus-within > .sub-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+/* Dropdown items */
+.hsr-nav-list .sub-menu .menu-item {
+    margin: 0;
+    padding: 0;
+}
+
+.hsr-nav-list .sub-menu .menu-item a {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #ffffff;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    display: block;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Arrow icon - hidden by default */
+.hsr-nav-list .sub-menu .menu-item a::after {
+    content: '↗';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* Hover state - green background */
+.hsr-nav-list .sub-menu .menu-item a:hover {
+    background-color: var(--wp--preset--color--accent);
+    color: var(--wp--preset--color--primary);
+    padding-right: 40px;
+}
+
+/* Arrow appears on hover */
+.hsr-nav-list .sub-menu .menu-item a:hover::after {
+    opacity: 1;
+    color: var(--wp--preset--color--primary);
+}
+
+/* Mobile: hide classic nav, show hamburger (handled by navigation.js) */
+@media (max-width: 1100px) {
+    .hsr-primary-nav {
+        display: none;
+    }
+}
+
 
 /* ==========================================
    MOBILE NAVIGATION (1060px and below)
